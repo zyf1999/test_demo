@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.springframework.org/schema/jdbc">
+<head>
+    <meta http-equiv="Content-Type" content="text/template; charset=UTF-8">
+    <title>Insert title here</title>
+    <link rel="stylesheet" href="../js/easyui1.5/themes/icon.css">
+    <link rel="stylesheet" href="../js/easyui1.5/themes/default/easyui.css">
+    <link rel="stylesheet" href="../js/uploadify/uploadify.css">
+    <link rel="stylesheet" href="../js/kindeditor-4.1.10/themes/default/default.css">
+    <script type="text/javascript" src="../js/easyui1.5/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/easyui1.5/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="../js/easyui1.5/locale/easyui-lang-zh_CN.js"></script>
+    <!--<script type="text/javascript" src="../js/uploadify/jquery.uploadify.js"></script>-->
+    <script type="text/javascript" src="../js/kindeditor-4.1.10/kindeditor-all.js"></script>
+
+</head>
+<body>
+<div id="myDialog" class="easyui-dialog" data-options="closed:true" style="height: 400px;width: 600px">
+    <div id="toolbar">
+        <input type="text" id="comments1">
+        <input type="text" id="sratrcreatetime" class="easyui-datebox">→
+        <input type="text" id="endcreatetime" class="easyui-datebox">
+        <a href="javascript:openAdd();" class="easyui-linkbutton">新增</a>
+        <a href="javascript:search();" class="easyui-linkbutton">搜索</a>
+        <a id="delallshan" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true">批量删除</a>
+    </div>
+    <table id="pinglunTable"></table>
+</div>
+<div id="addDialog" class="easyui-dialog" data-options="closed:true,buttons:[{
+    text:'保存',
+    handler:function(){
+      add();
+    }
+}]">
+    <form id="pinglunForm">
+        <table>
+            <tr>
+                <td>评论内容</td>
+                <td>
+                    <input type="text" name="comments" id="comments">
+                    <input type="text" style="display: none;" name="id">
+                </td>
+            </tr>
+            <tr>
+                <td>评论人</td>
+                <td><input type="text" name="commentsName"></td>
+            </tr>
+            <tr>
+                <td>评论等级</td>
+                <td>
+                    <input type="radio" value="1" name="commentsLevel">好
+                    <input type="radio" value="2" name="commentsLevel">一般
+                    <input type="radio" value="3" name="commentsLevel">差
+                </td>
+            </tr>
+            <tr>
+                <td>评论星</td>
+                <td>
+                    <input type="checkbox"  name="bb">
+                    <input type="checkbox"  name="bb">
+                    <input type="checkbox"  name="bb">
+                    <input type="checkbox"  name="bb">
+                    <input type="checkbox"  name="bb">
+                    (勾选一个表示一个数量)
+                    <input type="text" style="display: none;" id="count" name="count">
+                    <input type="text" style="display: none;" id="goodsId" name="goodsId">
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<table id="goodTable"></table>
+</body>
+<script th:inline="none" type="text/javascript">
+    $(function(){
+        initGoodsList();
+    })
+
+    //搜索
+    function search(){
+        var comments = $("#comments1").val();
+        var sratrcreatetime = $("#sratrcreatetime").datebox("getValue");
+        var endcreatetime = $("#endcreatetime").datebox("getValue");
+        $("#pinglunTable").datagrid("load",{
+            comments:comments,
+            sratrcreatetime:sratrcreatetime,
+            endcreatetime:endcreatetime
+        })
+    }
+
+
+    //打开新增
+    function openAdd(){
+        $("#addDialog").dialog("open");
+    }
+    //新增
+    function add(){
+        var arr = document.getElementsByName("bb");
+        var count = "";
+        for(var i=0;i<arr.length;i++){
+            if(arr[i].checked){
+                count++;
+            }
+        }
+        $("#count").val(count);
+        $("#pinglunForm").form("submit",{
+            url:'/goods/addPingLun',
+            method:'post',
+            success:function(data){
+                if(data){
+                    alert("成功")
+                    $("#addDialog").dialog("close");
+                    $("#pinglunTable").datagrid("reload")
+                }
+            }
+        })
+    }
+    //回显
+    function openupd(id){
+        var arr = document.getElementsByName("bb");
+        for(var i=0;i < arr.length;i++){
+            arr[i].checked=false;
+        }
+        $.ajax({
+            url:'/goods/updateHuixian',
+            type:'post',
+            data:{
+                id:id
+            },
+            dataType:"json",
+            success:function(data){
+                $("#pinglunForm").form("load",data)
+                var count = data.count;
+                var arr = document.getElementsByName("bb");
+                for(var i=0;i < count;i++){
+                    arr[i].checked=true;
+                }
+            }
+        })
+        $("#addDialog").dialog("open");
+    }
+
+    //商品分页
+    function initGoodsList(){
+        $("#goodTable").datagrid({
+            url:"/goods/findGoods",
+            method:'post',
+            pagination:true,
+            pageList:[1,2,3,4,5,6,7,8,9],
+            pageSize:3,
+            pageNumber:1,
+            fit:true,
+            columns:[
+                [
+                {field:"check",checkbox:true},
+                {field:'id',title:'id'},
+                {field:'name',title:'商品名称'},
+                {field:'count',title:'评论数量'},
+                    {field:'img',title:'头像',width:100,align:'center',formatter: function(value,row,index){
+                            return '<img src="'+value+'" width="80" height="80" onclick="addImg(&quot;'+row.img+'&quot)">';
+                        }},
+                {field:'caozuo',title:'操作',formatter(value,row,index){
+                        return "<input type='button' value='查看评论' onclick='chakan(\""+row.id+"\")'>";
+                    }}
+            ]
+            ],
+        })
+    }
+    //oss下载图片
+    function addImg(value) {
+        alert(value)
+       location.href="/user/flieImgByID?imgId="+value ;
+    }
+    //打开弹框查看
+    function chakan(id){
+        $("#goodsId").val(id);
+        $("#myDialog").dialog("open");
+        initPinglunList(id);
+    }
+    //评论分页
+    function initPinglunList(id){
+        $("#pinglunTable").datagrid({
+            url:"/goods/queryPingLun?goodId="+id,
+            method:'post',
+            toolbar:"#toolbar",
+            pagination:true,
+            pageList:[1,2,3,4,5,6,7,8,9],
+            pageSize:3,
+            pageNumber:1,
+            fit:true,
+            columns:[
+                [
+                {field:"check",checkbox:true},
+                {field:'id',title:'id'},
+                {field:'commentsName',title:'评论人'},
+                {field:'comments',title:'评论内容'},
+                {field:'commentsLevel',title:'评论等级',formatter(value,row,inde){
+                        return value == 1 ? "好" : value == 2 ? "一般" : "差"
+                    }},
+                {field:'count',title:'评论星',formatter(value,row,index){
+                        return value == 1 ? "☆" : value == 2 ? "☆☆" : value == 3 ? "☆☆☆" : value == 4 ? "☆☆☆☆" : "☆☆☆☆☆"
+                    }},
+                {field:'goodsId',title:'连表id'},
+                {field:'createtime',title:'时间'},
+                {field:'upd',title:'操作',formatter(value,row,index){
+                        return "<input type='button' value='修改' onclick='openupd(\""+row.id+"\")'>";
+                    }}
+            ]
+            ],
+        })
+    }
+
+    //批删
+    $("#delallshan").click(function(ids){
+        //返回所有被选中的行，当没有记录被选中的时候将返回一个空数组。
+        var cars=$("#pinglunTable").datagrid('getSelections');
+        if (cars.length<=0) {
+            $.messager.alert('提示','请选择删除的数据','warning')
+            return;
+        }
+        $.messager.confirm('确认对话框', '您确定要删除吗？', function(r){
+            if (r){
+                var ids='';
+                for (var i = 0; i < cars.length; i++) {
+                    ids+=ids==""?cars[i].id:','+cars[i].id;
+                }
+                $.ajax({
+                    url:"/goods/deleteshanall",
+                    type:"post",
+                    data:{
+                        ids:ids
+                    },
+                    success:function(data){
+                        if (data) {
+                            $("#pinglunTable").datagrid('reload');
+                        }else{
+                            //			 1:标题    2：提示内容  3:×
+                            $.messager.alert('提示','删除失败','error');
+                        }
+                    }
+                })
+            }
+        });
+    })
+
+</script>
+</html>

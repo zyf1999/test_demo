@@ -1,0 +1,87 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Insert title here</title>
+    <script src="../js/jquery-1.9.1.min.js"></script>
+    <script src="../js/easyui1.5/jquery.easyui.min.js"></script>
+    <script src="../js/easyui1.5/locale/easyui-lang-zh_CN.js"></script>
+    <link rel="stylesheet" href="../js/easyui1.5/themes/icon.css"/>
+    <link rel="stylesheet" href="../js/easyui1.5/themes/default/easyui.css">
+    <link rel="stylesheet" href="../js/uploadify/uploadify.css">
+    <link rel="stylesheet" href="../js/kindeditor-4.1.10/themes/default/default.css">
+    <script src="../js/kindeditor-4.1.10/kindeditor-all.js"></script>
+    <script src="../static/js/uploadify/jquery.uploadify.js"></script>
+</head>
+<body>
+<div  class="easyui-dialog" data-options="title:'登录',closable:false,
+         buttons:[
+         {
+            text:'登录',
+            iconCls:'icon-man',
+            handler:function(){
+            deng();
+            }
+         }
+         ]
+"style="width:300px;height:200px"
+>
+
+    <form method="post" id="deng">
+        <table align="center">
+            <tr>
+                <td>手机号</td>
+                <td><input type="text" class="easyui-textbox" id="loginNumber"></td>
+            </tr>
+            <tr>
+                <td>验证码</td>
+                <td>
+                    <input type="text" size="10px" class="easyui-textbox" id="password"/>
+                    <a id="getCode" class="easyui-linkbutton">获取验证码</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+</body>
+<script type="text/javascript">
+
+
+    //登录
+    function deng(){
+        $("#dl").click(function(){
+            var loginNumber=$("#loginNumber").textbox('getValue');
+            var password=$("#password").textbox('getValue');
+            $.ajax({
+                type:"post",
+                url:"/user/messagerlogin",
+                data:{
+                    loginNumber:loginNumber,
+                    password:password,
+                },
+                success:function(data){
+                    if(data!="登录成功"){
+                        alert("验证码错误");
+                    }else{
+                        location.href="/page/easYui1";
+                    }
+                }
+            })
+        })
+    }
+
+    $("#getCode").click(function(){
+        var loginNumber = $("#loginNumber").textbox("getValue");
+        $.ajax({
+            url:"/user/gainMessgerCode",
+            type:"post",
+            data:{loginNumber:loginNumber},
+            success:function(data){
+                $.messager.alert("提示",data,"info");
+            }
+        })
+    })
+
+</script>
+</html>

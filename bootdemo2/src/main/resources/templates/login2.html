@@ -1,0 +1,36 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html >
+<head>
+    <meta charset="UTF-8"/>
+    <title>Insert title here</title>
+    <script src="../js/jquery-1.9.1.min.js"></script>
+    <script src="../js/easyui1.5/jquery.easyui.min.js"></script>
+    <script src="../js/easyui1.5/locale/easyui-lang-zh_CN.js"></script>
+    <link rel="stylesheet" href="../js/easyui1.5/themes/icon.css">
+    <link rel="stylesheet" href="../js/easyui1.5/themes/default/easyui.css">
+    <link rel="stylesheet" href="../js/uploadify/uploadify.css">
+    <script src="../js/uploadify/jquery.uploadify.js"></script>
+    <link rel="stylesheet"
+          href="../js/kindeditor-4.1.10/themes/default/default.css">
+    <script src="../js/kindeditor-4.1.10/kindeditor-all.js"></script>
+</head>
+<body>
+<!--action="login" 写配置文件中的LoginUrl中内容  -->
+<form action="login2" method="post">
+    <!--username shiro默认的用户名属性  -->
+    <input type="text" class="easyui-textbox" name="username"/><br/>
+    <!--password shiro默认的密码属性 -->
+    <input type="password" class="easyui-passwordbox"  name="password"/><br/>
+    <input type="submit" value="登录"/>
+    <input type="button" onclick="ShouJi()" value="手机短信快捷登录"/>
+    <!--<input href="/page/findDeng" value="手机短信快捷登录"/><br/>-->
+</form>
+</body>
+<script type="text/javascript">
+    function ShouJi(){
+        location.href="/page/findDeng";
+    }
+
+</script>
+</html>

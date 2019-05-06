@@ -1,0 +1,52 @@
+spring:
+
+  data:
+    mongodb:
+      uri: mongodb://127.0.0.1:27017/1809b
+
+  datasource:
+    name: mydb
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://localhost:3306/demo
+    username: root
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
+  mail:
+    default-encoding: UTF-8
+    host: smtp.qq.com
+    username: 958437974@qq.com
+    password: bogqwfpgwqtobahi
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+    #邮件发送配置
+
+    #用户名
+    #username: 958437974@qq.com
+    #授权密码
+    #password: bogqwfpgwqtobahi
+
+
+redis:
+  database: 0
+  host: 127.0.0.1
+  port: 6379
+  password:
+  timeout: 5000
+  pool:
+  max-active: 20
+  max-wait: -1
+  max-idle: 8
+  min-idle: 0
+
+mybatis:
+  mapperLocations: classpath*:mybatis/mapper-*.xml
+  typeAliasesPackage: com.jk.bean
+
+
+
+

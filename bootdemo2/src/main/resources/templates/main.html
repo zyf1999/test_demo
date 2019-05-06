@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- 引入jequery -->
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <!-- 引入bootstrap的css、js文件 -->
+    <link rel="stylesheet" href="../bootstrap/bootstrap3/css/bootstrap.css">
+    <script type="text/javascript" src="../bootstrap/bootstrap3/js/bootstrap.js"></script>
+    <!-- 引入tree的css、js文件 -->
+    <link rel="stylesheet" href="../bootstrap/bootstrap-treeview/bootstrap-treeview.min.css">
+    <script type="text/javascript" src="../bootstrap/bootstrap-treeview/bootstrap-treeview.min.js"></script>
+    <!-- 引入选项卡tabs的css、js文件 -->
+    <link rel="stylesheet" href="../bootstrap/bootStrap-addTabs/bootstrap.addtabs.css">
+    <script type="text/javascript" src="../bootstrap/bootStrap-addTabs/bootstrap.addtabs.min.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">用户管理系统</a>
+        </div>
+        <div class="navbar-right">
+            <a class="navbar-brand" href="#">0v0</a>
+        </div>
+    </div>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+            <!-- 树的div -->
+            <div id="myTree"></div>
+        </div>
+        <div class="col-md-10">
+            <div id="myTabs">
+                <!-- 新选项卡 -->
+                <ul class="nav nav-tabs" id="tablist">
+                    <li role="presentation" class="active">
+                        <a href="#home" role="tab" data-toggle="tab">欢迎</a>
+                    </li>
+                </ul>
+
+                <!-- 选项卡下内容 -->
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="home">
+                        首页
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<SCRIPT>
+    $(function(){
+        initTree();//初始化树的数据
+    })
+    //初始化树的数据
+    function initTree(){
+        $.ajax({
+            url:"/tree/findTree",
+            type:"post",
+            success:function(data){
+                $('#myTree').treeview({
+                    data:data,
+                    onNodeSelected:function(event, node) {
+                        $.addtabs({iframeHeight: 550});
+                        $.addtabs.add({
+                            id:node.id,
+                            title:node.text,
+                            url:"../"+node.href
+                        });
+                    }
+                })
+            }
+        })
+    }
+</SCRIPT>
+</html>

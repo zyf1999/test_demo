@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jk.dao.BookMapper">
+ <!--查询数量-->
+    <select id="queryCount" parameterType="book" resultType="int">
+      select count(1) from 1810_book
+    </select>
+  <!--分页查询-->
+    <select id="queryUserList" resultType="book">
+        select * from 1810_book  LIMIT #{start},#{rows}
+    </select>
+
+    <!--删除-->
+    <delete id="deleteItem" parameterType="int">
+        delete from 1810_book where bookId in
+        <foreach collection="array" index="index" item="item" open="("
+                 close=")" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+
+    <!--新增-->
+    <insert id="saveBook" parameterType="book">
+        INSERT into 1810_book (bookName,bookPrice,bookType,bookDate) VALUES(#{bookName},#{bookPrice},#{bookType},#{bookDate})
+    </insert>
+
+    <!--修改-->
+    <update id="updateBook" parameterType="book">
+         UPDATE 1810_book set bookName=#{bookName}, bookPrice=#{bookPrice} ,bookType=#{bookType},bookDate=#{bookDate} where bookId=#{bookId}
+    </update>
+</mapper>
